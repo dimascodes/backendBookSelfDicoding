@@ -5,16 +5,6 @@ const book = require('./books')
 const addBookHandler = (request, h) => {
   const { name, year, author, summary, publisher, pageCount, readPage, reading} = request.payload;
 
-  const id = nanoid(16);
-  const finished = pageCount === readPage;
-  const insertedAt = new Date().toISOString();
-  const updatedAt = insertedAt;
-
-  const newBook = { 
-    id, name, year, author, summary, publisher, pageCount, readPage, reading, finished, insertedAt, updatedAt, 
-  };
-  
-
   if (!name) {
     return h.response({
       status: 'fail',
@@ -27,6 +17,16 @@ const addBookHandler = (request, h) => {
       message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
     }).code(400);
   }
+
+  const id = nanoid(16);
+  const finished = pageCount === readPage;
+  const insertedAt = new Date().toISOString();
+  const updatedAt = insertedAt;
+
+  const newBook = { 
+    id, name, year, author, summary, publisher, pageCount, readPage, reading, finished, insertedAt, updatedAt, 
+  };
+  
 
   book.push(newBook);
   const isSuccess = book.filter((book) => book.id === id).length > 0;
@@ -78,16 +78,28 @@ const getAllBookHandler = (request, h) => {
 const getIdBookHandler = (request, h) => {
   const { bookId } = request.params;
 
-  const dataBook = book.filter((n) => n.id === bookId)[0];
-  if(dataBook) {
+  const books = book.find((n) => n.id === bookId);
+  if(books) {
     return h.response ({
       status: 'success',
       data: {
-        dataBook,
+        book: {
+          id: book.id,
+          name: book.name,
+          author: book.author,
+          summary: book.summary,
+          publisher: book.publisher,
+          pageCount: book.pageCount,
+          readPage: book.readPage,
+          finished: book.finished,
+          reading: book.reading,
+          insertedAt: book.insertedAt,
+          updatedAt: book.updatedAt,
+        }
       },
     }).code(200);
   }
-``
+
   return h.response ({
     status: 'fail',
     message: 'Buku tidak ditemukan',
@@ -105,7 +117,7 @@ const finisHandler = (request, h) => {
       },
     }).code(200);
   }
-``
+
   return h.response ({
     status: 'fail',
     message: 'tidak ada buku yang selesai dibaca ditemukan',
