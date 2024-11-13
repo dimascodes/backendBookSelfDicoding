@@ -78,28 +78,16 @@ const getAllBookHandler = (request, h) => {
 const getIdBookHandler = (request, h) => {
   const { bookId } = request.params;
 
-  const books = book.find((n) => n.id === bookId);
-  if(books) {
+  const dataBook = book.find((n) => n.id === bookId);
+	console.log(dataBook);
+  if(dataBook) {
     return h.response ({
       status: 'success',
       data: {
-        book: {
-          id: book.id,
-          name: book.name,
-          author: book.author,
-          summary: book.summary,
-          publisher: book.publisher,
-          pageCount: book.pageCount,
-          readPage: book.readPage,
-          finished: book.finished,
-          reading: book.reading,
-          insertedAt: book.insertedAt,
-          updatedAt: book.updatedAt,
-        }
+        book: dataBook,
       },
     }).code(200);
   }
-
   return h.response ({
     status: 'fail',
     message: 'Buku tidak ditemukan',
